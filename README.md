@@ -12,6 +12,8 @@ La ville de Seattle impose aux bâtiments de plus de 20 000 pieds carrés de dé
 
 ## Architecture du projet
 
+![Architecture](docs/architecture.svg)
+
 ```
 ├── app/                  # API FastAPI
 │   ├── main.py           # Endpoints de l'API
