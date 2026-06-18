@@ -25,7 +25,7 @@ env/
 *.ipynb
 
 # Modèles entraînés (trop lourds pour Git)
-models/*.pkl
+# models/*.pkl
 models/*.joblib
 models/*.h5
 !models/.gitkeep
