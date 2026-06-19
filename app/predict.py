@@ -2,10 +2,21 @@ import joblib
 import numpy as np
 import pandas as pd
 from pathlib import Path
+import urllib.request
+import os
 
-MODEL_PATH = Path(__file__).parent.parent / "models" / "model.pkl"
+MODEL_PATH = Path("models/model.pkl")
+HF_MODEL_URL = "https://huggingface.co/spaces/fatimaadda2878/seattle-energy-prediction/resolve/main/models/model.pkl"
 
 _model = None
+
+
+def download_model():
+    """Télécharge le modèle depuis Hugging Face si non présent en local."""
+    MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    print("Téléchargement du modèle depuis Hugging Face...")
+    urllib.request.urlretrieve(HF_MODEL_URL, MODEL_PATH)
+    print("Modèle téléchargé avec succès ✅")
 
 
 def load_model():
@@ -13,7 +24,7 @@ def load_model():
     global _model
     if _model is None:
         if not MODEL_PATH.exists():
-            raise FileNotFoundError(f"Modèle introuvable : {MODEL_PATH}")
+            download_model()
         _model = joblib.load(MODEL_PATH)
     return _model
 
@@ -30,14 +41,12 @@ def is_model_loaded() -> bool:
 def prepare_features(data: dict) -> pd.DataFrame:
     """Transforme les données brutes en features pour le modèle."""
 
-    # Features dérivées
     log_surface_totale = np.log1p(data["PropertyGFATotal"])
     log_surface_batiment = np.log1p(data["PropertyGFABuilding"])
     ratio_surface = data["PropertyGFABuilding"] / data["PropertyGFATotal"]
     building_age = 2016 - data["YearBuilt"]
     nb_sources_energie = data["has_electricity"] + data["has_gas"] + data["has_steam"]
 
-    # Label encoding (valeurs fixes apprises sur le dataset)
     neighborhood_map = {
         'BALLARD': 0, 'BEACON HILL': 1, 'BELTOWN': 2, 'CAPITOL HILL': 3,
         'CENTRAL': 4, 'DOWNTOWN': 6, 'FIRST HILL': 7, 'FREMONT': 8,
@@ -53,7 +62,6 @@ def prepare_features(data: dict) -> pd.DataFrame:
     neighborhood_enc = neighborhood_map.get(data["Neighborhood"].upper(), 5)
     building_type_enc = building_type_map.get(data["BuildingType"], 4)
 
-    # ZipCode encoding (index dans la liste triée des zipcodes du dataset)
     zipcodes = sorted([
         98006, 98007, 98008, 98101, 98102, 98103, 98104, 98105,
         98106, 98107, 98108, 98109, 98112, 98115, 98116, 98117,
@@ -64,7 +72,6 @@ def prepare_features(data: dict) -> pd.DataFrame:
     zipcode_enc = zipcodes.index(int(data["ZipCode"])) if int(data["ZipCode"]) in zipcodes else 0
 
     features = {
-        # Numériques
         "log_surface_totale": log_surface_totale,
         "log_surface_batiment": log_surface_batiment,
         "ratio_surface": ratio_surface,
@@ -78,7 +85,6 @@ def prepare_features(data: dict) -> pd.DataFrame:
         "Neighborhood_enc": neighborhood_enc,
         "BuildingType_enc": building_type_enc,
         "ZipCode_enc": zipcode_enc,
-        # Catégorielles (OHE dans la pipeline)
         "PrimaryPropertyType": data["PrimaryPropertyType"],
         "tranche_age": data["tranche_age"],
         "tranche_surface": data["tranche_surface"],
