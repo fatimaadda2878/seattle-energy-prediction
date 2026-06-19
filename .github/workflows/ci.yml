@@ -46,10 +46,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
 
-      - name: Déploiement vers Hugging Face
-        uses: huggingface/huggingface-repo-sync-action@v0.0.2
-        with:
-          dst_token: ${{ secrets.HF_TOKEN }}
-          dst_repo_id: fatimaadda2878/seattle-energy-prediction
-          dst_repo_type: space
+      - name: Push vers Hugging Face Spaces
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git remote add hf https://fatimaadda2878:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/fatimaadda2878/seattle-energy-prediction
+          git push hf main --force
