@@ -47,11 +47,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Push vers Hugging Face Spaces (sans model.pkl)
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: |
-          git config --global user.email "github-actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git filter-branch --index-filter 'git rm --cached --ignore-unmatch models/model.pkl' HEAD || true
-          git push https://fatimaadda2878:$HF_TOKEN@huggingface.co/spaces/fatimaadda2878/seattle-energy-prediction main --force
+      - name: Déploiement vers Hugging Face
+        uses: huggingface/huggingface-repo-sync-action@v0.0.2
+        with:
+          dst_token: ${{ secrets.HF_TOKEN }}
+          dst_repo_id: fatimaadda2878/seattle-energy-prediction
+          dst_repo_type: space
