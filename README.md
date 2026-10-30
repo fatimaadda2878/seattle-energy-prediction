@@ -15,29 +15,34 @@ La ville de Seattle impose aux bâtiments de plus de 20 000 pieds carrés de dé
 ![Architecture](docs/architecture.svg)
 
 ```
-├── app/                  # API FastAPI
-│   ├── main.py           # Endpoints de l'API
-│   ├── schemas.py        # Modèles Pydantic (input/output)
-│   ├── predict.py        # Chargement du modèle et inférence
-│   └── database.py       # Connexion PostgreSQL
-├── data/
-│   ├── raw/              # Dataset brut (non versionné)
-│   └── processed/        # Données nettoyées
-├── models/               # Modèle entraîné (non versionné)
+├── app/                         # API FastAPI
+│   ├── main.py                  # Endpoints de l'API
+│   ├── schemas.py               # Modèles Pydantic (input/output)
+│   ├── predict.py               # Chargement du modèle et inférence
+│   └── database.py              # Connexion PostgreSQL
+├── notebooks/
+│   └── seattle_energy_modeling.ipynb   # Analyse exploratoire et modélisation
 ├── scripts/
-│   ├── create_db.py      # Création de la base PostgreSQL
-│   └── insert_data.py    # Insertion du dataset
-├── tests/                # Tests unitaires et fonctionnels
+│   ├── create_db.py             # Création de la base PostgreSQL
+│   └── insert_data.py           # Insertion du dataset
+├── tests/                       # Tests unitaires et fonctionnels (pytest)
 │   ├── test_api.py
 │   ├── test_model.py
 │   └── test_db.py
-├── docs/                 # Documentation technique
-├── notebooks/            # Notebook d'exploration
-├── .github/workflows/    # CI/CD GitHub Actions
+├── docs/
+│   ├── TECHNICAL.md             # Documentation technique
+│   └── architecture.svg         # Schéma d'architecture
+├── .github/workflows/ci.yml     # CI/CD GitHub Actions
+├── .env.example                 # Modèle de variables d'environnement
 ├── Dockerfile
+├── pytest.ini
 ├── requirements.txt
 └── README.md
 ```
+
+Deux dossiers ne sont pas versionnés et sont créés en local :
+- `data/raw/` : y placer le dataset `2016_Building_Energy_Benchmarking.csv` (jeu public de la ville de Seattle) ;
+- `models/` : le modèle entraîné `model.pkl`, téléchargé automatiquement depuis Hugging Face au premier lancement de l'API.
 
 ---
 
