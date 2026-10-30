@@ -45,7 +45,7 @@ La ville de Seattle impose aux bâtiments de plus de 20 000 pieds carrés de dé
 
 - **Algorithme :** `GradientBoostingRegressor` (scikit-learn)
 - **Pipeline :** StandardScaler (numériques) + OneHotEncoder (catégorielles) + GBR
-- **Optimisation :** GridSearchCV (3-fold CV)
+- **Optimisation :** GridSearchCV (5-fold CV)
 - **Meilleurs hyperparamètres :** `n_estimators=300`, `max_depth=3`, `learning_rate=0.05`, `min_samples_leaf=5`
 - **Performances :** R² = 0.715 | MAE (log) = 0.48 sur le jeu de test
 
